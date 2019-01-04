@@ -13,7 +13,37 @@ class App extends Component {
         lat: 0,
         lng: 0,
         location: "",
-        weather: {}
+        weather: {
+            // latitude: 37.8267,
+            // longitude: -122.4233,
+            // timezone: "America/Los_Angeles",
+            // currently: {
+            //     time: 1546556988,
+            //     summary: "Partly Cloudy",
+            //     icon: "partly-cloudy-day",
+            //     nearestStormDistance: 3,
+            //     nearestStormBearing: 96,
+            //     precipIntensity: 0,
+            //     precipProbability: 0,
+            //     temperature: 53.46,
+            //     apparentTemperature: 53.46,
+            //     dewPoint: 35.41,
+            //     humidity: 0.5,
+            //     pressure: 1021.23,
+            //     windSpeed: 3.03,
+            //     windGust: 8.03,
+            //     windBearing: 38,
+            //     cloudCover: 0.47,
+            //     uvIndex: 1,
+            //     visibility: 10,
+            //     ozone: 270.44
+            // },
+            // minutely: {},
+            // hourly: {},
+            // daily: {},
+            // flags: {},
+            // offset: -8
+        }
     };
 
     onSearchSubmit = async term => {
@@ -22,18 +52,14 @@ class App extends Component {
             response = await axios.get("/geocode", {
                 params: { address: term }
             });
-            const location = response.data.results[0].geometry.location;
 
-            this.setState(
-                {
-                    lat: location.lat,
-                    lng: location.lng,
-                    location: response.data.results[0].formatted_address
-                },
-                () => {
-                    this.requestWeather();
-                }
-            );
+            const lat = response.data.results[0].geometry.location.lat,
+                lng = response.data.results[0].geometry.location.lng,
+                location = response.data.results[0].formatted_address;
+
+            this.setState({ lat, lng, location }, () => {
+                this.requestWeather();
+            });
         } catch (error) {
             console.log(error);
         }
@@ -50,13 +76,9 @@ class App extends Component {
                     response = await axios.get("/geocode", {
                         params: { latlng: `${lat},${lng}` }
                     });
-                    this.setState(
-                        {
-                            lat,
-                            lng,
-                            location: response.data.results[0].formatted_address
-                        },
-                        () => this.requestWeather()
+                    const location = response.data.results[0].formatted_address;
+                    this.setState({ lat, lng, location }, () =>
+                        this.requestWeather()
                     );
                 } catch (error) {
                     console.log(error);
@@ -88,7 +110,7 @@ class App extends Component {
     render() {
         return (
             <div>
-                <Navbar appName="PhotoWeather">
+                <Navbar>
                     <SearchBar
                         onSubmit={this.onSearchSubmit}
                         placeholder="Find location..."
@@ -100,10 +122,12 @@ class App extends Component {
                     />
                 </Navbar>
                 <main className="container">
-                    <BasicWeather
-                        location={this.state.location}
-                        weather={this.state.weather}
-                    />
+                    <div className="row align-items-center mb-4 mt-4">
+                        <BasicWeather
+                            location={this.state.location}
+                            weather={this.state.weather}
+                        />
+                    </div>
                 </main>
             </div>
         );
