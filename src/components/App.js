@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import axios from "axios";
+import geocode from "../api/geocode";
 
 // components
 import BasicWeather from "./BasicWeather";
 import DefaultButton from "./DefaultButton";
 import Navbar from "./Navbar";
 import SearchBar from "./SearchBar";
+import Alert from "./Alert";
 
 // App
 class App extends Component {
@@ -43,25 +45,20 @@ class App extends Component {
             // daily: {},
             // flags: {},
             // offset: -8
-        }
+        },
+        errorMessage: ""
     };
 
     onSearchSubmit = async term => {
         let response = {};
-        try {
-            response = await axios.get("/geocode", {
-                params: { address: term }
-            });
+        response = await geocode({ params: { address: term } });
 
-            const lat = response.data.results[0].geometry.location.lat,
-                lng = response.data.results[0].geometry.location.lng,
-                location = response.data.results[0].formatted_address;
-
-            this.setState({ lat, lng, location }, () => {
+        if (response.hasOwnProperty("errorMessage")) {
+            this.setState({ ...response });
+        } else {
+            this.setState({ ...response }, () => {
                 this.requestWeather();
             });
-        } catch (error) {
-            console.log(error);
         }
     };
 
@@ -69,19 +66,19 @@ class App extends Component {
         window.navigator.geolocation.getCurrentPosition(
             async position => {
                 let response = {};
-                const lat = position.coords.latitude.toFixed(7),
+                let lat = position.coords.latitude.toFixed(7),
                     lng = position.coords.longitude.toFixed(7);
-                // get location name from google geocode api
-                try {
-                    response = await axios.get("/geocode", {
-                        params: { latlng: `${lat},${lng}` }
+
+                response = await geocode({
+                    params: { latlng: `${lat},${lng}` }
+                });
+
+                if (response.hasOwnProperty("errorMessage")) {
+                    this.setState({ ...response });
+                } else {
+                    this.setState({ ...response, errorMessage: "" }, () => {
+                        this.requestWeather();
                     });
-                    const location = response.data.results[0].formatted_address;
-                    this.setState({ lat, lng, location }, () =>
-                        this.requestWeather()
-                    );
-                } catch (error) {
-                    console.log(error);
                 }
             },
             error => {
@@ -123,6 +120,7 @@ class App extends Component {
                 </Navbar>
                 <main className="container">
                     <div className="row align-items-center mb-4 mt-4">
+                        <Alert errorMessage={this.state.errorMessage} />
                         <BasicWeather
                             location={this.state.location}
                             weather={this.state.weather}
