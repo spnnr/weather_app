@@ -1,5 +1,8 @@
 import React from "react";
 
+// components
+import Spinner from "./Spinner";
+
 class BasicWeather extends React.Component {
     isEmpty(obj) {
         for (let key in obj) {
@@ -9,7 +12,9 @@ class BasicWeather extends React.Component {
     }
 
     render() {
-        if (this.isEmpty(this.props.weather)) {
+        // console.log("BW props:", this.props);
+
+        if (this.isEmpty(this.props.weather) && !this.props.status) {
             return (
                 <div className="col">
                     <p>
@@ -18,6 +23,18 @@ class BasicWeather extends React.Component {
                     </p>
                 </div>
             );
+        }
+
+        if (this.props.status === "loading") {
+            return (
+                <div className="col text-center">
+                    <Spinner />
+                </div>
+            );
+        }
+
+        if (this.props.status === "error") {
+            return <div />;
         }
 
         const currently = this.props.weather.currently;

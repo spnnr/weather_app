@@ -5,13 +5,18 @@ import axios from "axios";
 import BasicWeather from "./BasicWeather";
 import DefaultButton from "./DefaultButton";
 import Navbar from "./Navbar";
-import SearchBar from "./SearchBar";
+import Search from "./Search";
+import Alert from "./Alert";
+import Footer from "./Footer";
+
+// css
+import "../css/main.css";
 
 // App
 class App extends Component {
     state = {
-        lat: 0,
-        lng: 0,
+        lat: null,
+        lng: null,
         location: "",
         weather: {
             // latitude: 37.8267,
@@ -43,75 +48,80 @@ class App extends Component {
             // daily: {},
             // flags: {},
             // offset: -8
-        }
+        },
+        error: "",
+        status: ""
     };
 
     onSearchSubmit = async term => {
-        let response = {};
-        try {
-            response = await axios.get("/geocode", {
-                params: { address: term }
-            });
-
-            const lat = response.data.results[0].geometry.location.lat,
-                lng = response.data.results[0].geometry.location.lng,
-                location = response.data.results[0].formatted_address;
-
-            this.setState({ lat, lng, location }, () => {
-                this.requestWeather();
-            });
-        } catch (error) {
-            console.log(error);
+        this.setState({ status: "loading" });
+        let response = await axios.get("/geocode", {
+            params: { address: term }
+        });
+        if (response.data.hasOwnProperty("error")) {
+            this.setState({ ...response.data, status: "error" });
+            return;
         }
+        this.setState(response.data, () => {
+            this.requestWeather();
+        });
     };
 
     onLocationRequest = () => {
+        this.setState({ status: "loading" });
         window.navigator.geolocation.getCurrentPosition(
             async position => {
-                let response = {};
-                const lat = position.coords.latitude.toFixed(7),
+                let lat = position.coords.latitude.toFixed(7),
                     lng = position.coords.longitude.toFixed(7);
-                // get location name from google geocode api
-                try {
-                    response = await axios.get("/geocode", {
-                        params: { latlng: `${lat},${lng}` }
-                    });
-                    const location = response.data.results[0].formatted_address;
-                    this.setState({ lat, lng, location }, () =>
-                        this.requestWeather()
-                    );
-                } catch (error) {
-                    console.log(error);
+                let response = await axios.get("/geocode", {
+                    params: {
+                        latlng: `${lat},${lng}`
+                    }
+                });
+                if (response.data.hasOwnProperty("error")) {
+                    this.setState({ ...response.data, status: "error" });
+                    return;
                 }
+                this.setState(response.data, () => {
+                    this.requestWeather();
+                });
             },
             error => {
-                console.log(error);
+                let result = {
+                    lat: null,
+                    lng: null,
+                    location: "",
+                    error,
+                    status: "error"
+                };
+                this.setState(result);
             }
         );
     };
 
     requestWeather = async () => {
-        let response = {};
-        try {
-            response = await axios.get("/weather", {
-                params: {
-                    lat: this.state.lat,
-                    lng: this.state.lng
-                }
-            });
-            this.setState({
-                weather: response.data
-            });
-        } catch (error) {
-            console.log(error);
-        }
+        var response = await axios.get("/weather", {
+            params: {
+                lat: this.state.lat,
+                lng: this.state.lng
+            }
+        });
+        console.log(response);
+
+        let weather = response.data;
+        response = { weather, status: "success" };
+        this.setState(response);
     };
 
     render() {
+        // console.log("App state:", this.state);
         return (
             <div>
                 <Navbar>
-                    <SearchBar
+                    <a className="navbar-brand" href="/">
+                        WeatherApp
+                    </a>
+                    <Search
                         onSubmit={this.onSearchSubmit}
                         placeholder="Find location..."
                     />
@@ -122,13 +132,21 @@ class App extends Component {
                     />
                 </Navbar>
                 <main className="container">
+                    <Alert error={this.state.error} />
+                    {/* need a weather container here */}
                     <div className="row align-items-center mb-4 mt-4">
                         <BasicWeather
                             location={this.state.location}
                             weather={this.state.weather}
+                            status={this.state.status}
                         />
                     </div>
                 </main>
+                <Footer>
+                    <p className="text-muted d-inline-block">
+                        Created by Anton U
+                    </p>
+                </Footer>
             </div>
         );
     }
