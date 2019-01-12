@@ -12,7 +12,7 @@ class BasicWeather extends React.Component {
     }
 
     render() {
-        console.log("BW props:", this.props);
+        // console.log("BW props:", this.props);
 
         if (this.isEmpty(this.props.weather) && !this.props.status) {
             return (

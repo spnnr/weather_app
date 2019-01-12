@@ -5,7 +5,7 @@ import axios from "axios";
 import BasicWeather from "./BasicWeather";
 import DefaultButton from "./DefaultButton";
 import Navbar from "./Navbar";
-import SearchBar from "./SearchBar";
+import Search from "./Search";
 import Alert from "./Alert";
 import Footer from "./Footer";
 
@@ -114,11 +114,14 @@ class App extends Component {
     };
 
     render() {
-        console.log("App state:", this.state);
+        // console.log("App state:", this.state);
         return (
             <div>
                 <Navbar>
-                    <SearchBar
+                    <a className="navbar-brand" href="/">
+                        WeatherApp
+                    </a>
+                    <Search
                         onSubmit={this.onSearchSubmit}
                         placeholder="Find location..."
                     />
@@ -129,8 +132,9 @@ class App extends Component {
                     />
                 </Navbar>
                 <main className="container">
+                    <Alert error={this.state.error} />
+                    {/* need a weather container here */}
                     <div className="row align-items-center mb-4 mt-4">
-                        <Alert error={this.state.error} />
                         <BasicWeather
                             location={this.state.location}
                             weather={this.state.weather}
@@ -139,9 +143,9 @@ class App extends Component {
                     </div>
                 </main>
                 <Footer>
-                    <span className="text-muted">
-                        something will go here...
-                    </span>
+                    <p className="text-muted d-inline-block">
+                        Created by Anton U
+                    </p>
                 </Footer>
             </div>
         );
