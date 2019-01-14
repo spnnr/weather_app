@@ -19,12 +19,61 @@ class App extends Component {
             // { key: 1, name: "Moscow", lat: 55.755825, lng: 37.617298 },
             // { key: 2, name: "Vancouver", lat: 49.28273, lng: -123.120735 }
         ],
-        error: ""
+        error: "",
+        forecastList: []
     };
 
+    // used to handle error messages
     handleError = error => {
         console.log(error);
         this.setState({ error });
+    };
+
+    // builds forecast list with weather forecast for each location
+    async requestWeather() {
+        if (this.state.locations.length === 0) {
+            return;
+        }
+        let forecastList = [];
+        for (let i = 0; i < this.state.locations.length; i++) {
+            try {
+                const response = await axios.get("/weather", {
+                    params: {
+                        lat: this.state.locations[i].lat,
+                        lng: this.state.locations[i].lng
+                    }
+                });
+                const forecast = {
+                    ...this.state.locations[i],
+                    forecast: response.data
+                };
+                forecastList.push(forecast);
+                this.setState({ forecastList });
+            } catch (error) {
+                this.props.handleError(error);
+                return;
+            }
+        }
+        this.setState({ forecastList, error: "" });
+    }
+
+    // handles location lookup from search field
+    onSearchSubmit = async term => {
+        let response = await axios.get("/geocode", {
+            params: { address: term }
+        });
+        if (response.data.hasOwnProperty("error")) {
+            this.handleError(response.data.error);
+            return;
+        }
+
+        this.setState(
+            { locations: [...this.state.locations, response.data] },
+            () => {
+                this.requestWeather();
+            }
+        );
+        console.log(this.state);
     };
 
     // isEmpty(obj) {
@@ -33,18 +82,6 @@ class App extends Component {
     //     }
     //     return true;
     // }
-
-    onSearchSubmit = async term => {
-        let response = await axios.get("/geocode", {
-            params: { address: term }
-        });
-        if (response.data.hasOwnProperty("error")) {
-            this.handleError(response.error);
-            return;
-        }
-
-        this.setState({ locations: [...this.state.locations, response.data] });
-    };
 
     // onLocationRequest = () => {
     //     this.setState({ status: "loading" });
@@ -124,7 +161,7 @@ class App extends Component {
                     <Alert error={this.state.error} />
                     <div className="row align-items-center mb-4 mt-4">
                         <WeatherList
-                            locations={this.state.locations}
+                            forecastList={this.state.forecastList}
                             handleError={this.handleError}
                         />
                     </div>
