@@ -42,21 +42,18 @@ app.get("/weather", async (req, res) => {
 // Google Geocode API proxy
 app.get("/geocode", async (req, res) => {
     const API = process.env.GOOGLE_API;
-
-    let params = { key: API, ...req.query },
-        lat = null,
-        lng = null,
-        location = "",
-        result = {};
+    const params = { key: API, ...req.query };
+    let result = {};
     try {
         var response = await axios.get(
             "https://maps.googleapis.com/maps/api/geocode/json",
             { params }
         );
-        lat = response.data.results[0].geometry.location.lat;
-        lng = response.data.results[0].geometry.location.lng;
-        location = response.data.results[0].formatted_address;
-        result = { lat, lng, location };
+        const lat = response.data.results[0].geometry.location.lat,
+            lng = response.data.results[0].geometry.location.lng,
+            name = response.data.results[0].formatted_address,
+            id = response.data.results[0].place_id;
+        result = { id, name, lat, lng };
     } catch (error) {
         result = {
             error: response.data.error_message
