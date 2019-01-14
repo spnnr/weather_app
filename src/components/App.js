@@ -8,6 +8,7 @@ import Navbar from "./ui/Navbar";
 import Search from "./ui/Search";
 import Alert from "./ui/Alert";
 import Footer from "./ui/Footer";
+import Spinner from "./ui/Spinner";
 
 // css
 import "../css/main.css";
@@ -27,6 +28,20 @@ class App extends Component {
     handleError = error => {
         console.log(error);
         this.setState({ error });
+    };
+
+    // adds location to a list of locations searched by a user
+    addLocation = location => {
+        if (location.hasOwnProperty("error")) {
+            this.handleError(location.error);
+            return;
+        }
+        this.setState(
+            { locations: [...this.state.locations, location] },
+            () => {
+                this.requestWeather();
+            }
+        );
     };
 
     // builds forecast list with weather forecast for each location
@@ -57,90 +72,55 @@ class App extends Component {
         this.setState({ forecastList, error: "" });
     }
 
-    // handles location lookup from search field
+    // handles search field request from the user
     onSearchSubmit = async term => {
         let response = await axios.get("/geocode", {
             params: { address: term }
         });
-        if (response.data.hasOwnProperty("error")) {
-            this.handleError(response.data.error);
-            return;
-        }
 
-        this.setState(
-            { locations: [...this.state.locations, response.data] },
-            () => {
-                this.requestWeather();
-            }
-        );
-        console.log(this.state);
+        this.addLocation(response.data);
     };
 
-    // isEmpty(obj) {
-    //     for (let key in obj) {
-    //         if (obj.hasOwnProperty(key)) return false;
-    //     }
-    //     return true;
-    // }
-
-    // onLocationRequest = () => {
-    //     this.setState({ status: "loading" });
-    //     window.navigator.geolocation.getCurrentPosition(
-    //         async position => {
-    //             let lat = position.coords.latitude.toFixed(7),
-    //                 lng = position.coords.longitude.toFixed(7);
-    //             let response = await axios.get("/geocode", {
-    //                 params: {
-    //                     latlng: `${lat},${lng}`
-    //                 }
-    //             });
-    //             if (response.data.hasOwnProperty("error")) {
-    //                 this.setState({ ...response.data, status: "error" });
-    //                 return;
-    //             }
-    //             this.setState(response.data, () => {
-    //                 this.requestWeather();
-    //             });
-    //         },
-    //         error => {
-    //             let result = {
-    //                 lat: null,
-    //                 lng: null,
-    //                 location: "",
-    //                 error,
-    //                 status: "error"
-    //             };
-    //             this.setState(result);
-    //         }
-    //     );
-    // };
-
-    // console.log("BW props:", this.props);
-
-    // if (this.isEmpty(this.props.weather) && !this.props.status) {
-    //     return (
-    //         <div className="col">
-    //             <p>
-    //                 Detect your location or search for any city in the world
-    //                 to see weather
-    //             </p>
-    //         </div>
-    //     );
-    // }
-
-    // if (this.props.status === "loading") {
-    //     return (
-    //         <div className="col text-center">
-    //             <Spinner />
-    //         </div>
-    //     );
-    // }
-
-    // if (this.props.status === "error") {
-    //     return <div />;
-    // }
+    // handles geolocation request from the user
+    onLocationRequest = () => {
+        window.navigator.geolocation.getCurrentPosition(
+            async position => {
+                let lat = position.coords.latitude.toFixed(7),
+                    lng = position.coords.longitude.toFixed(7);
+                let response = await axios.get("/geocode", {
+                    params: {
+                        latlng: `${lat},${lng}`
+                    }
+                });
+                this.addLocation(response.data);
+            },
+            error => {
+                this.handleError(error);
+            }
+        );
+    };
 
     render() {
+        // console.log("App state", this.state);
+        let content = null;
+        if (
+            this.state.locations.length > 0 &&
+            this.state.forecastList.length < this.state.locations.length
+        ) {
+            content = <Spinner />;
+        }
+        if (
+            this.state.locations.length > 0 &&
+            this.state.forecastList.length > 0 &&
+            this.state.locations.length === this.state.forecastList.length
+        ) {
+            content = (
+                <WeatherList
+                    forecastList={this.state.forecastList}
+                    handleError={this.handleError}
+                />
+            );
+        }
         return (
             <div>
                 <Navbar>
@@ -152,7 +132,7 @@ class App extends Component {
                         placeholder="Find location..."
                     />
                     <DefaultButton
-                        // {onClick={this.onLocationRequest}}
+                        onClick={this.onLocationRequest}
                         icon="fa-map-marker-alt"
                         btnType="secondary"
                     />
@@ -160,10 +140,7 @@ class App extends Component {
                 <main className="container">
                     <Alert error={this.state.error} />
                     <div className="row align-items-center mb-4 mt-4">
-                        <WeatherList
-                            forecastList={this.state.forecastList}
-                            handleError={this.handleError}
-                        />
+                        {content}
                     </div>
                 </main>
                 <Footer>
@@ -175,5 +152,12 @@ class App extends Component {
         );
     }
 }
+
+// isEmpty(obj) {
+//     for (let key in obj) {
+//         if (obj.hasOwnProperty(key)) return false;
+//     }
+//     return true;
+// }
 
 export default App;
