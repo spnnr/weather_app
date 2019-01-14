@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import axios from "axios";
 
 // components
-import BasicWeather from "./BasicWeather";
-import DefaultButton from "./DefaultButton";
-import Navbar from "./Navbar";
-import Search from "./Search";
-import Alert from "./Alert";
-import Footer from "./Footer";
+import WeatherList from "./WeatherList";
+import DefaultButton from "./ui/DefaultButton";
+import Navbar from "./ui/Navbar";
+import Search from "./ui/Search";
+import Alert from "./ui/Alert";
+import Footer from "./ui/Footer";
+import Spinner from "./ui/Spinner";
 
 // css
 import "../css/main.css";
@@ -15,60 +16,75 @@ import "../css/main.css";
 // App
 class App extends Component {
     state = {
-        lat: null,
-        lng: null,
-        location: "",
-        weather: {
-            // latitude: 37.8267,
-            // longitude: -122.4233,
-            // timezone: "America/Los_Angeles",
-            // currently: {
-            //     time: 1546556988,
-            //     summary: "Partly Cloudy",
-            //     icon: "partly-cloudy-day",
-            //     nearestStormDistance: 3,
-            //     nearestStormBearing: 96,
-            //     precipIntensity: 0,
-            //     precipProbability: 0,
-            //     temperature: 53.46,
-            //     apparentTemperature: 53.46,
-            //     dewPoint: 35.41,
-            //     humidity: 0.5,
-            //     pressure: 1021.23,
-            //     windSpeed: 3.03,
-            //     windGust: 8.03,
-            //     windBearing: 38,
-            //     cloudCover: 0.47,
-            //     uvIndex: 1,
-            //     visibility: 10,
-            //     ozone: 270.44
-            // },
-            // minutely: {},
-            // hourly: {},
-            // daily: {},
-            // flags: {},
-            // offset: -8
-        },
+        locations: [
+            // { key: 1, name: "Moscow", lat: 55.755825, lng: 37.617298 },
+            // { key: 2, name: "Vancouver", lat: 49.28273, lng: -123.120735 }
+        ],
         error: "",
-        status: ""
+        forecastList: []
     };
 
+    // used to handle error messages
+    handleError = error => {
+        console.log(error);
+        this.setState({ error });
+    };
+
+    // adds location to a list of locations searched by a user
+    addLocation = location => {
+        if (location.hasOwnProperty("error")) {
+            this.handleError(location.error);
+            return;
+        }
+        this.setState(
+            { locations: [...this.state.locations, location] },
+            () => {
+                this.requestWeather();
+            }
+        );
+    };
+
+    // builds forecast list with weather forecast for each location
+    async requestWeather() {
+        if (this.state.locations.length === 0) {
+            return;
+        }
+        let forecastList = [];
+        for (let i = 0; i < this.state.locations.length; i++) {
+            try {
+                const response = await axios.get("/weather", {
+                    params: {
+                        lat: this.state.locations[i].lat,
+                        lng: this.state.locations[i].lng
+                    }
+                });
+                const forecast = {
+                    ...this.state.locations[i],
+                    forecast: response.data
+                };
+                forecastList.push(forecast);
+                this.setState({ forecastList });
+            } catch (error) {
+                this.props.handleError(error);
+                return;
+            }
+        }
+        this.setState({ forecastList, error: "" });
+    }
+
+    // handles search field request from the user
     onSearchSubmit = async term => {
-        this.setState({ status: "loading" });
+        this.setState({ error: "" });
         let response = await axios.get("/geocode", {
             params: { address: term }
         });
-        if (response.data.hasOwnProperty("error")) {
-            this.setState({ ...response.data, status: "error" });
-            return;
-        }
-        this.setState(response.data, () => {
-            this.requestWeather();
-        });
+
+        this.addLocation(response.data);
     };
 
+    // handles geolocation request from the user
     onLocationRequest = () => {
-        this.setState({ status: "loading" });
+        this.setState({ error: "" });
         window.navigator.geolocation.getCurrentPosition(
             async position => {
                 let lat = position.coords.latitude.toFixed(7),
@@ -78,43 +94,42 @@ class App extends Component {
                         latlng: `${lat},${lng}`
                     }
                 });
-                if (response.data.hasOwnProperty("error")) {
-                    this.setState({ ...response.data, status: "error" });
-                    return;
-                }
-                this.setState(response.data, () => {
-                    this.requestWeather();
-                });
+                this.addLocation(response.data);
             },
             error => {
-                let result = {
-                    lat: null,
-                    lng: null,
-                    location: "",
-                    error,
-                    status: "error"
-                };
-                this.setState(result);
+                this.handleError(error);
             }
         );
     };
 
-    requestWeather = async () => {
-        var response = await axios.get("/weather", {
-            params: {
-                lat: this.state.lat,
-                lng: this.state.lng
-            }
-        });
-        console.log(response);
-
-        let weather = response.data;
-        response = { weather, status: "success" };
-        this.setState(response);
-    };
-
     render() {
-        // console.log("App state:", this.state);
+        console.log("App state", this.state);
+        let content = (
+            <div className="col">
+                <p>
+                    Search for a city or geolocate to see forecast for your
+                    current location
+                </p>
+            </div>
+        );
+        if (
+            this.state.locations.length > 0 &&
+            this.state.forecastList.length < this.state.locations.length
+        ) {
+            content = <Spinner />;
+        }
+        if (
+            this.state.locations.length > 0 &&
+            this.state.forecastList.length > 0 &&
+            this.state.locations.length === this.state.forecastList.length
+        ) {
+            content = (
+                <WeatherList
+                    forecastList={this.state.forecastList}
+                    handleError={this.handleError}
+                />
+            );
+        }
         return (
             <div>
                 <Navbar>
@@ -133,18 +148,13 @@ class App extends Component {
                 </Navbar>
                 <main className="container">
                     <Alert error={this.state.error} />
-                    {/* need a weather container here */}
                     <div className="row align-items-center mb-4 mt-4">
-                        <BasicWeather
-                            location={this.state.location}
-                            weather={this.state.weather}
-                            status={this.state.status}
-                        />
+                        {content}
                     </div>
                 </main>
                 <Footer>
                     <p className="text-muted d-inline-block">
-                        Created by Anton U
+                        Put "delete all data" link here
                     </p>
                 </Footer>
             </div>
