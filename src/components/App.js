@@ -74,6 +74,7 @@ class App extends Component {
 
     // handles search field request from the user
     onSearchSubmit = async term => {
+        this.setState({ error: "" });
         let response = await axios.get("/geocode", {
             params: { address: term }
         });
@@ -83,6 +84,7 @@ class App extends Component {
 
     // handles geolocation request from the user
     onLocationRequest = () => {
+        this.setState({ error: "" });
         window.navigator.geolocation.getCurrentPosition(
             async position => {
                 let lat = position.coords.latitude.toFixed(7),
@@ -101,8 +103,15 @@ class App extends Component {
     };
 
     render() {
-        // console.log("App state", this.state);
-        let content = null;
+        console.log("App state", this.state);
+        let content = (
+            <div className="col">
+                <p>
+                    Search for a city or geolocate to see forecast for your
+                    current location
+                </p>
+            </div>
+        );
         if (
             this.state.locations.length > 0 &&
             this.state.forecastList.length < this.state.locations.length
@@ -152,12 +161,5 @@ class App extends Component {
         );
     }
 }
-
-// isEmpty(obj) {
-//     for (let key in obj) {
-//         if (obj.hasOwnProperty(key)) return false;
-//     }
-//     return true;
-// }
 
 export default App;
