@@ -16,10 +16,8 @@ import "../css/main.css";
 // App
 class App extends Component {
     state = {
-        locations: [
-            // { key: 1, name: "Moscow", lat: 55.755825, lng: 37.617298 },
-            // { key: 2, name: "Vancouver", lat: 49.28273, lng: -123.120735 }
-        ],
+        tmpLocation: {},
+        locations: [],
         error: "",
         forecastList: []
     };
@@ -101,7 +99,7 @@ class App extends Component {
         );
     };
 
-    // loads locations saved by the user
+    // loads locations from localStorage
     getLocationsFromLocalStorage() {
         if (localStorage.hasOwnProperty("locations")) {
             let locations = localStorage.getItem("locations");
@@ -116,10 +114,22 @@ class App extends Component {
         }
     }
 
-    // saves locations saved by the user in localStorage
+    // saves locations in localStorage
     saveLocationsToLocalStorage() {
         localStorage.setItem("locations", JSON.stringify(this.state.locations));
     }
+
+    // delete all data from localStorage and clear state
+    clearAllData = () => {
+        console.log("resetting the app!");
+        this.setState({
+            tmpLocation: {},
+            locations: [],
+            error: "",
+            forecastList: []
+        });
+        localStorage.clear();
+    };
 
     componentDidMount() {
         if (localStorage) {
@@ -187,7 +197,12 @@ class App extends Component {
                 </main>
                 <Footer>
                     <p className="text-muted d-inline-block">
-                        Put "delete all data" link here
+                        <button
+                            className="btn btn-sm btn-danger"
+                            onClick={this.clearAllData}
+                        >
+                            Clear Data
+                        </button>
                     </p>
                 </Footer>
             </div>
@@ -196,3 +211,6 @@ class App extends Component {
 }
 
 export default App;
+
+// { key: 1, name: "Moscow", lat: 55.755825, lng: 37.617298 },
+// { key: 2, name: "Vancouver", lat: 49.28273, lng: -123.120735 }
