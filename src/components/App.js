@@ -25,10 +25,10 @@ class App extends Component {
     };
 
     // used to handle error messages
-    handleError = error => {
+    handleError(error) {
         console.log(error);
         this.setState({ error });
-    };
+    }
 
     // adds location to a list of locations searched by a user
     addLocation = location => {
@@ -50,30 +50,29 @@ class App extends Component {
             return;
         }
         let forecastList = [];
-        for (let i = 0; i < this.state.locations.length; i++) {
+        for (const location of this.state.locations) {
             try {
                 const response = await axios.get("/weather", {
                     params: {
-                        lat: this.state.locations[i].lat,
-                        lng: this.state.locations[i].lng
+                        lat: location.lat,
+                        lng: location.lng
                     }
                 });
                 const forecast = {
-                    ...this.state.locations[i],
+                    ...location,
                     forecast: response.data
                 };
                 forecastList.push(forecast);
-                this.setState({ forecastList });
             } catch (error) {
-                this.props.handleError(error);
+                this.handleError(error);
                 return;
             }
         }
-        this.setState({ forecastList, error: "" });
+        this.setState({ forecastList });
     }
 
     // handles search field request from the user
-    onSearchSubmit = async term => {
+    onLocationSearchSubmit = async term => {
         this.setState({ error: "" });
         let response = await axios.get("/geocode", {
             params: { address: term }
@@ -102,6 +101,45 @@ class App extends Component {
         );
     };
 
+    // loads locations saved by the user
+    getLocationsFromLocalStorage() {
+        if (localStorage.hasOwnProperty("locations")) {
+            let locations = localStorage.getItem("locations");
+            try {
+                locations = JSON.parse(locations);
+                this.setState({ locations }, () => {
+                    this.requestWeather();
+                });
+            } catch (error) {
+                this.setState(locations);
+            }
+        }
+    }
+
+    // saves locations saved by the user in localStorage
+    saveLocationsToLocalStorage() {
+        localStorage.setItem("locations", JSON.stringify(this.state.locations));
+    }
+
+    componentDidMount() {
+        if (localStorage) {
+            this.getLocationsFromLocalStorage();
+        }
+        window.addEventListener(
+            "beforeunload",
+            this.saveLocationsToLocalStorage.bind(this)
+        );
+    }
+
+    // cleaning up before component unmounts
+    componentWillUnmount() {
+        window.removeEventListener(
+            "beforeunload",
+            this.saveLocationsToLocalStorage.bind(this)
+        );
+        this.saveLocationsToLocalStorage();
+    }
+
     render() {
         console.log("App state", this.state);
         let content = (
@@ -123,12 +161,7 @@ class App extends Component {
             this.state.forecastList.length > 0 &&
             this.state.locations.length === this.state.forecastList.length
         ) {
-            content = (
-                <WeatherList
-                    forecastList={this.state.forecastList}
-                    handleError={this.handleError}
-                />
-            );
+            content = <WeatherList forecastList={this.state.forecastList} />;
         }
         return (
             <div>
@@ -137,7 +170,7 @@ class App extends Component {
                         WeatherApp
                     </a>
                     <Search
-                        onSubmit={this.onSearchSubmit}
+                        onSubmit={this.onLocationSearchSubmit}
                         placeholder="Find location..."
                     />
                     <DefaultButton
