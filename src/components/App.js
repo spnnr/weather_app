@@ -10,6 +10,7 @@ import Search from "./ui/Search";
 import Alert from "./ui/Alert";
 import Footer from "./ui/Footer";
 import Spinner from "./ui/Spinner";
+import Modal from "./ui/Modal";
 
 // css
 import "../css/main.css";
@@ -165,7 +166,6 @@ class App extends Component {
 
     // delete all data from localStorage and clear state
     clearAllData = () => {
-        // TODO ask before clearing all data (use modal)
         this.setState({
             tmpLocation: {},
             tmpForecast: {},
@@ -271,14 +271,17 @@ class App extends Component {
                     </div>
                 </main>
                 <Footer>
-                    <p className="text-muted d-inline-block">
-                        <DefaultButton
+                    <span className="text-muted d-inline-block">
+                        <Modal
                             type="danger"
-                            text="Clear all data"
-                            onClick={this.clearAllData}
-                            icon="fa-times"
+                            modalTitle="Clear All Data"
+                            modalMessage="Are you sure you want to reset the state of the
+                            application?"
+                            btnText="Clear all data"
+                            btnAction={this.clearAllData}
+                            btnIcon="fa-times"
                         />
-                    </p>
+                    </span>
                 </Footer>
             </div>
         );
