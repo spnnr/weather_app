@@ -11,6 +11,7 @@ import Alert from "./ui/Alert";
 import Footer from "./ui/Footer";
 import Spinner from "./ui/Spinner";
 import Modal from "./ui/Modal";
+import InputSelect from "./ui/InputSelect";
 
 // css
 import "../css/main.css";
@@ -18,15 +19,16 @@ import "../css/main.css";
 // App
 class App extends Component {
     state = {
+        error: "",
         tmpLocation: {},
         tmpForecast: {},
         locations: [],
-        error: "",
-        forecastList: []
+        forecastList: [],
+        units: "Metric"
     };
-    // TODO refresh weather automatically every 15 minutes
+    // TODO add unit selector
     // TODO change the looks of it
-    // TODO convert locations and forecastList to Map ???
+    // TODO refresh weather automatically every 30 minutes
     // TODO refactor, refactor, refactor
 
     // handles error messages
@@ -42,6 +44,12 @@ class App extends Component {
         }
         return true;
     }
+
+    // handles unit selection
+    // TODO complete implementation of this function
+    onUnitsChange = i => {
+        console.log(i);
+    };
 
     // handles search field request from the user
     onLocationSearchSubmit = async term => {
@@ -74,23 +82,27 @@ class App extends Component {
     };
 
     // handles user's request to remember location
-    onUserSaveLocation = () => {
-        console.log("save location!");
+    onSaveLocation = () => {
+        const locations = this.state.locations.filter(location => {
+            return location.id !== this.state.tmpLocation.id;
+        });
+        const forecastList = this.state.forecastList.filter(location => {
+            return location.id !== this.state.tmpLocation.id;
+        });
         this.setState({
-            locations: [...this.state.locations, this.state.tmpLocation],
-            forecastList: [...this.state.forecastList, this.state.tmpForecast],
+            locations: [this.state.tmpLocation, ...locations],
+            forecastList: [this.state.tmpForecast, ...forecastList],
             tmpForecast: {},
             tmpLocation: {}
         });
     };
 
     // handles user's request to delete location
-    onUserDeleteLocation = id => {
-        console.log("delete location!", id);
-        let locations = this.state.locations.filter(location => {
+    onDeleteLocation = id => {
+        const locations = this.state.locations.filter(location => {
             return location.id !== id;
         });
-        let forecastList = this.state.forecastList.filter(location => {
+        const forecastList = this.state.forecastList.filter(location => {
             return location.id !== id;
         });
         this.setState({ locations, forecastList });
@@ -196,7 +208,7 @@ class App extends Component {
     }
 
     render() {
-        console.log("App state", this.state);
+        // console.log("App state", this.state);
         let tmpForecast = (
             <div className="col">
                 <p>
@@ -224,7 +236,7 @@ class App extends Component {
             content = (
                 <ForecastList
                     forecastList={this.state.forecastList}
-                    buttonAction={this.onUserDeleteLocation}
+                    buttonAction={this.onDeleteLocation}
                     buttonText="Delete"
                 />
             );
@@ -235,7 +247,7 @@ class App extends Component {
             tmpForecast = (
                 <ForecastTmp
                     location={this.state.tmpForecast}
-                    buttonAction={this.onUserSaveLocation}
+                    buttonAction={this.onSaveLocation}
                     buttonText="Save"
                 />
             );
@@ -255,6 +267,11 @@ class App extends Component {
                         onClick={this.onGeolocationRequest}
                         icon="fa-map-marker-alt"
                         type="secondary"
+                    />
+                    <InputSelect
+                        inputTitle="Units"
+                        inputOptions={["Metric", "Imperial"]}
+                        onChange={this.onUnitsChange}
                     />
                     <DefaultButton
                         onClick={this.refreshWeather}
