@@ -1,12 +1,28 @@
 import React from "react";
 
-const WeatherCard = props => {
-    const currently = props.forecast.currently;
-    return (
-        <div className="col">
+// components
+import DefaultButton from "./ui/DefaultButton";
+
+// props:
+// - key
+// - forecast
+// - location
+// - buttonText
+// - buttonAction
+// - locationId
+
+class ForecastCard extends React.Component {
+    onUserAction = event => {
+        event.preventDefault();
+        this.props.buttonAction(this.props.locationId);
+    };
+
+    render() {
+        const currently = this.props.forecast.currently;
+        return (
             <div className="card text-center">
                 <div className="card-body">
-                    <h3 className="card-title">{props.location}</h3>
+                    <h3 className="card-title">{this.props.location}</h3>
                     <p>{currently.summary}</p>
                     <h1>
                         {currently.temperature}&deg;/
@@ -36,10 +52,23 @@ const WeatherCard = props => {
                         </div>
                     </div>
                 </div>
+                <div className="card-body">
+                    <DefaultButton
+                        type="primary"
+                        onClick={this.onUserAction}
+                        text={this.props.buttonText}
+                        icon="fa-bookmark"
+                    />
+                </div>
             </div>
-            <p />
-        </div>
-    );
-};
+        );
+    }
+}
 
-export default WeatherCard;
+// props:
+// - type
+// - onClick
+// - icon
+// - text
+
+export default ForecastCard;

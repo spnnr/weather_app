@@ -1,12 +1,18 @@
 import React from "react";
 
+// props:
+// - type
+// - onClick
+// - icon
+// - text
+
 const DefaultButton = props => {
     let className = "btn",
         buttonText = "",
         iconType = "fas";
 
-    if (!(props.btnType === undefined)) {
-        className += " btn-" + props.btnType;
+    if (!(props.type === undefined)) {
+        className += " btn-" + props.type;
     } else {
         className += " btn-primary";
     }
