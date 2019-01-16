@@ -165,7 +165,7 @@ class App extends Component {
 
     // delete all data from localStorage and clear state
     clearAllData = () => {
-        // TODO ask before clearing all data
+        // TODO ask before clearing all data (use modal)
         this.setState({
             tmpLocation: {},
             tmpForecast: {},
