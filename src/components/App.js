@@ -24,7 +24,8 @@ class App extends Component {
         tmpForecast: {},
         locations: [],
         forecastList: [],
-        units: "Metric"
+        units: "si",
+        unitsOptions: ["Metric", "Imperial"]
     };
     // TODO add unit selector
     // TODO change the looks of it
@@ -46,9 +47,12 @@ class App extends Component {
     }
 
     // handles unit selection
-    // TODO complete implementation of this function
-    onUnitsChange = i => {
-        console.log(i);
+    onUnitsChange = input => {
+        // console.log(input);
+        let units = input === "metric" ? "si" : "us";
+        this.setState({ units }, () => {
+            this.refreshWeather();
+        });
     };
 
     // handles search field request from the user
@@ -81,7 +85,7 @@ class App extends Component {
         );
     };
 
-    // handles user's request to remember location
+    // handles user's request to save location
     onSaveLocation = () => {
         const locations = this.state.locations.filter(location => {
             return location.id !== this.state.tmpLocation.id;
@@ -125,9 +129,14 @@ class App extends Component {
             const response = await axios.get("/weather", {
                 params: {
                     lat: location.lat,
-                    lng: location.lng
+                    lng: location.lng,
+                    units: this.state.units
                 }
             });
+            if (response.data.hasOwnProperty("error")) {
+                this.handleError(response.data.error);
+                return;
+            }
             forecast = {
                 ...location,
                 forecast: response.data
@@ -156,24 +165,36 @@ class App extends Component {
     };
 
     // loads locations from localStorage
-    getLocationsFromLocalStorage() {
+    getStateFromLocalStorage() {
+        // get units
+        let units = "si";
+        let unitsOptions = ["Metric", "Imperial"];
+        if (localStorage.hasOwnProperty("units")) {
+            units = localStorage.getItem("units");
+        }
+        // set the order of units in the units selector
+        if (units === "us") {
+            unitsOptions = ["Imperial", "Metric"];
+        }
+        // get stored locations and set state
         if (localStorage.hasOwnProperty("locations")) {
             let locations = localStorage.getItem("locations");
             try {
                 locations = JSON.parse(locations);
-                this.setState({ locations }, () => {
+                this.setState({ locations, units, unitsOptions }, () => {
                     this.refreshWeather();
                 });
             } catch (error) {
                 // handles empty array
-                this.setState(locations);
+                this.setState(locations, units, unitsOptions);
             }
         }
     }
 
     // saves locations in localStorage
-    saveLocationsToLocalStorage() {
+    saveStateToLocalStorage() {
         localStorage.setItem("locations", JSON.stringify(this.state.locations));
+        localStorage.setItem("units", this.state.units);
     }
 
     // delete all data from localStorage and clear state
@@ -190,11 +211,11 @@ class App extends Component {
 
     componentDidMount() {
         if (localStorage) {
-            this.getLocationsFromLocalStorage();
+            this.getStateFromLocalStorage();
         }
         window.addEventListener(
             "beforeunload",
-            this.saveLocationsToLocalStorage.bind(this)
+            this.saveStateToLocalStorage.bind(this)
         );
     }
 
@@ -202,9 +223,9 @@ class App extends Component {
     componentWillUnmount() {
         window.removeEventListener(
             "beforeunload",
-            this.saveLocationsToLocalStorage.bind(this)
+            this.saveStateToLocalStorage.bind(this)
         );
-        this.saveLocationsToLocalStorage();
+        this.saveStateToLocalStorage();
     }
 
     render() {
@@ -270,7 +291,7 @@ class App extends Component {
                     />
                     <InputSelect
                         inputTitle="Units"
-                        inputOptions={["Metric", "Imperial"]}
+                        inputOptions={this.state.unitsOptions}
                         onChange={this.onUnitsChange}
                     />
                     <DefaultButton

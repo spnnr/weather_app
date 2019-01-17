@@ -38,7 +38,9 @@ const InputSelect = props => {
                 onChange={e => {
                     e.preventDefault();
                     props.onChange(
-                        e.target.options[e.target.options.selectedIndex].text
+                        e.target.options[
+                            e.target.options.selectedIndex
+                        ].text.toLowerCase()
                     );
                 }}
             >
