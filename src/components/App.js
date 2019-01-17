@@ -27,10 +27,9 @@ class App extends Component {
         units: "si",
         unitsOptions: ["Metric", "Imperial"]
     };
-    // TODO add unit selector
+
     // TODO change the looks of it
     // TODO refresh weather automatically every 30 minutes
-    // TODO refactor, refactor, refactor
 
     // handles error messages
     handleError(error) {
@@ -204,7 +203,9 @@ class App extends Component {
             tmpForecast: {},
             locations: [],
             error: "",
-            forecastList: []
+            forecastList: [],
+            units: "si",
+            unitsOptions: ["Metric", "Imperial"]
         });
         localStorage.clear();
     };
