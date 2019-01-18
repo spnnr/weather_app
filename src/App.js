@@ -7,7 +7,6 @@ import ForecastTmp from "./components/ForecastTmp";
 // ui components
 import DefaultButton from "./components/ui/DefaultButton";
 import Navbar from "./components/ui/Navbar";
-import Search from "./components/ui/Search";
 import Alert from "./components/ui/Alert";
 import Footer from "./components/ui/Footer";
 import Spinner from "./components/ui/Spinner";
@@ -30,11 +29,11 @@ class App extends Component {
     };
 
     // todo list:
-    //
-    // FIXME clear text from input after search
     // FIXME Spinner when loading
     // FIXME units display in WeatherCard
+    // FIXME make search button smaller
     //
+    // TODO custom bootstrap
     // TODO reformat WeatherCard
     // TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
     // TODO add nice graphics
@@ -247,29 +246,19 @@ class App extends Component {
         // console.log("App state", this.state);
         return (
             <div>
-                <Navbar>
-                    <div className="mr-auto">
-                        <Search
-                            onSubmit={this.onLocationSearchSubmit}
-                            placeholder="Find location..."
-                        />
-                    </div>
-                    <div className="navbar-nav">
-                        <div className="ml-2">
+                <Navbar onLocationSearchSubmit={this.onLocationSearchSubmit}>
+                    <div className="navbar-nav ml-auto">
+                        <div className="d-inline-flex flex-nowrap mr-auto">
                             <DefaultButton
                                 onClick={this.onGeolocationRequest}
                                 icon="fa-map-marker-alt"
                                 type="secondary"
                             />
-                        </div>
-                        <div className="ml-2">
                             <InputSelect
                                 inputTitle="Units"
                                 inputOptions={this.state.unitsOptions}
                                 onChange={this.onUnitsChange}
                             />
-                        </div>
-                        <div className="ml-2">
                             <DefaultButton
                                 onClick={this.refreshWeather}
                                 icon="fa-redo"
@@ -298,7 +287,7 @@ class App extends Component {
                     </div>
                 </main>
                 <Footer>
-                    <span className="text-muted d-inline-block">
+                    <span className="text-muted align-items-center">
                         <Modal
                             type="secondary"
                             modalTitle="Clear All Data"

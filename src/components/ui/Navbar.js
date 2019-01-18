@@ -1,8 +1,9 @@
 import React from "react";
+import Search from "./Search";
 
 function Navbar(props) {
     return (
-        <nav className="navbar navbar-expand navbar-light bg-light">
+        <nav className="navbar navbar-expand-sm navbar-light bg-light">
             <div className="container">
                 <button
                     className="navbar-toggler"
@@ -15,6 +16,10 @@ function Navbar(props) {
                 >
                     <span className="navbar-toggler-icon" />
                 </button>
+                <Search
+                    onSubmit={props.onLocationSearchSubmit}
+                    placeholder="Find location..."
+                />
                 <div
                     className="collapse navbar-collapse"
                     id="navbarSupportedContent"

@@ -50,7 +50,9 @@ const Modal = props => {
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div className="modal-body">{props.modalMessage}</div>
+                        <div className="modal-body">
+                            <p>{props.modalMessage}</p>
+                        </div>
                         <div className="modal-footer">
                             <button
                                 type="button"

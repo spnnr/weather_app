@@ -23,7 +23,7 @@ const InputSelect = props => {
     });
 
     return (
-        <div className="col-xs-2">
+        <div className="col-sm">
             <div className="input-group input-group-sm">
                 <div className="input-group-prepend">
                     <label

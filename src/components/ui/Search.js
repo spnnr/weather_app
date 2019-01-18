@@ -9,23 +9,20 @@ class Search extends React.Component {
         this.textInput = React.createRef();
     }
 
-    focusTextInput() {
-        this.textInput.current.focus();
-    }
-
     onSearchSubmit = event => {
         event.preventDefault();
         this.props.onSubmit(this.state.term);
+        this.textInput.current.value = "";
     };
 
     componentDidMount() {
-        this.focusTextInput();
+        this.textInput.current.focus();
     }
 
     render() {
         return (
             <form
-                className="form-inline my-2 my-lg-0"
+                className="form-inline my-2 my-lg-0 d-flex flex-nowrap"
                 onSubmit={this.onSearchSubmit}
             >
                 <input
@@ -33,10 +30,10 @@ class Search extends React.Component {
                     type="text"
                     placeholder={this.props.placeholder}
                     onChange={e => this.setState({ term: e.target.value })}
-                    className="form-control mr-sm-2"
+                    className="form-control form-control-sm mr-sm-2"
                 />
                 <button
-                    className="btn btn-outline-success my-2 my-sm-0"
+                    className="btn btn-sm btn-outline-success my-2 my-sm-0"
                     type="submit"
                 >
                     Search
