@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import ForecastCard from "./ForecastCard";
+import ForecastCard from "./ui/ForecastCard";
 
 function isEmpty(obj) {
     for (let key in obj) {
@@ -12,7 +12,14 @@ function isEmpty(obj) {
 
 const ForecastTmp = props => {
     if (isEmpty(props.location)) {
-        return null;
+        return (
+            <div className="col">
+                <p>
+                    Search for a city or geolocate to see forecast for your
+                    current location
+                </p>
+            </div>
+        );
     }
     return (
         <div className="col">
@@ -23,6 +30,9 @@ const ForecastTmp = props => {
                 location={props.location.name}
                 buttonText={props.buttonText}
                 buttonAction={props.buttonAction}
+                deleteCard={props.deleteCard}
+                deleteButtonText="Clear"
+                tmp
             />
         </div>
     );

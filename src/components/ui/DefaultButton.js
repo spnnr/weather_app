@@ -7,7 +7,7 @@ import React from "react";
 // - text
 
 const DefaultButton = props => {
-    let className = "btn",
+    let className = `btn btn-sm`,
         buttonText = "",
         iconType = "fas";
 

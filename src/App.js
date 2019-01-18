@@ -2,19 +2,20 @@ import React, { Component } from "react";
 import axios from "axios";
 
 // components
-import ForecastList from "./ForecastList";
-import ForecastTmp from "./ForecastTmp";
-import DefaultButton from "./ui/DefaultButton";
-import Navbar from "./ui/Navbar";
-import Search from "./ui/Search";
-import Alert from "./ui/Alert";
-import Footer from "./ui/Footer";
-import Spinner from "./ui/Spinner";
-import Modal from "./ui/Modal";
-import InputSelect from "./ui/InputSelect";
+import ForecastList from "./components/ForecastList";
+import ForecastTmp from "./components/ForecastTmp";
+// ui components
+import DefaultButton from "./components/ui/DefaultButton";
+import Navbar from "./components/ui/Navbar";
+import Search from "./components/ui/Search";
+import Alert from "./components/ui/Alert";
+import Footer from "./components/ui/Footer";
+import Spinner from "./components/ui/Spinner";
+import Modal from "./components/ui/Modal";
+import InputSelect from "./components/ui/InputSelect";
 
 // css
-import "../css/main.css";
+import "./css/main.css";
 
 // App
 class App extends Component {
@@ -28,7 +29,15 @@ class App extends Component {
         unitsOptions: ["Metric", "Imperial"]
     };
 
-    // TODO change the looks of it
+    // todo list:
+    //
+    // FIXME clear text from input after search
+    // FIXME Spinner when loading
+    // FIXME units display in WeatherCard
+    //
+    // TODO reformat WeatherCard
+    // TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
+    // TODO add nice graphics
     // TODO refresh weather automatically every 30 minutes
 
     // handles error messages
@@ -120,6 +129,11 @@ class App extends Component {
         const tmpForecast = await this.requestWeather(tmpLocation);
         this.setState({ tmpLocation, tmpForecast });
     }
+
+    // clears temporary search on user request
+    clearTmp = () => {
+        this.setState({ tmpLocation: {}, tmpForecast: {} });
+    };
 
     // requests weather for a single location and returns it
     async requestWeather(location) {
@@ -231,88 +245,62 @@ class App extends Component {
 
     render() {
         // console.log("App state", this.state);
-        let tmpForecast = (
-            <div className="col">
-                <p>
-                    Search for a city or geolocate to see forecast for your
-                    current location
-                </p>
-            </div>
-        );
-        let content = null;
-
-        // show while loading weather for stored locations
-        if (
-            this.state.locations.length > 0 &&
-            this.state.forecastList.length < this.state.locations.length
-        ) {
-            content = <Spinner />;
-        }
-
-        // show forecast for stored locations
-        if (
-            this.state.locations.length > 0 &&
-            this.state.forecastList.length > 0 &&
-            this.state.locations.length === this.state.forecastList.length
-        ) {
-            content = (
-                <ForecastList
-                    forecastList={this.state.forecastList}
-                    buttonAction={this.onDeleteLocation}
-                    buttonText="Delete"
-                />
-            );
-        }
-
-        // show forecast for temporary location
-        if (!this.isEmpty(this.state.tmpForecast)) {
-            tmpForecast = (
-                <ForecastTmp
-                    location={this.state.tmpForecast}
-                    buttonAction={this.onSaveLocation}
-                    buttonText="Save"
-                />
-            );
-        }
-
         return (
             <div>
                 <Navbar>
-                    <a className="navbar-brand" href="/">
-                        WeatherApp
-                    </a>
-                    <Search
-                        onSubmit={this.onLocationSearchSubmit}
-                        placeholder="Find location..."
-                    />
-                    <DefaultButton
-                        onClick={this.onGeolocationRequest}
-                        icon="fa-map-marker-alt"
-                        type="secondary"
-                    />
-                    <InputSelect
-                        inputTitle="Units"
-                        inputOptions={this.state.unitsOptions}
-                        onChange={this.onUnitsChange}
-                    />
-                    <DefaultButton
-                        onClick={this.refreshWeather}
-                        icon="fa-redo"
-                        type="secondary"
-                    />
+                    <div className="mr-auto">
+                        <Search
+                            onSubmit={this.onLocationSearchSubmit}
+                            placeholder="Find location..."
+                        />
+                    </div>
+                    <div className="navbar-nav">
+                        <div className="ml-2">
+                            <DefaultButton
+                                onClick={this.onGeolocationRequest}
+                                icon="fa-map-marker-alt"
+                                type="secondary"
+                            />
+                        </div>
+                        <div className="ml-2">
+                            <InputSelect
+                                inputTitle="Units"
+                                inputOptions={this.state.unitsOptions}
+                                onChange={this.onUnitsChange}
+                            />
+                        </div>
+                        <div className="ml-2">
+                            <DefaultButton
+                                onClick={this.refreshWeather}
+                                icon="fa-redo"
+                                type="secondary"
+                            />
+                        </div>
+                    </div>
                 </Navbar>
                 <main className="container">
                     <Alert error={this.state.error} />
-                    <div className="row align-items-center mb-4 mt-4">
-                        {tmpForecast}
-                        <hr />
-                        {content}
+                    <div className="row align-items-center mt-4">
+                        <ForecastTmp
+                            location={this.state.tmpForecast}
+                            buttonAction={this.onSaveLocation}
+                            buttonText="Save"
+                            deleteCard={this.clearTmp}
+                        />
+                    </div>
+                    <hr className="separator" />
+                    <div className="row align-items-center mt-4">
+                        <ForecastList
+                            forecastList={this.state.forecastList}
+                            buttonAction={this.onDeleteLocation}
+                            buttonText="Delete"
+                        />
                     </div>
                 </main>
                 <Footer>
                     <span className="text-muted d-inline-block">
                         <Modal
-                            type="danger"
+                            type="secondary"
                             modalTitle="Clear All Data"
                             modalMessage="Are you sure you want to reset the state of the
                             application?"

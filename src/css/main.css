@@ -4,7 +4,13 @@ html {
 }
 
 body {
-    margin-bottom: 60px; /* Margin bottom by footer height */
+    /*margin-bottom: -webkit-calc(60px + 2em);
+    margin-bottom: calc(60px + 2em);*/
+    margin-bottom: 60px;
+}
+
+hr.separator {
+    margin-top: 0;
 }
 
 .footer {

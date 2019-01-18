@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import ForecastCard from "./ForecastCard";
+import ForecastCard from "./ui/ForecastCard";
 
 const ForecastList = props => {
     if (props.forecastList.length === 0) {

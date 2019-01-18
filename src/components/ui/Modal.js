@@ -14,7 +14,7 @@ const Modal = props => {
         <div>
             <button
                 type="button"
-                className={`btn btn-${props.type}`}
+                className={`btn btn-sm btn-${props.type}`}
                 data-toggle="modal"
                 data-target="#exampleModalCenter"
             >

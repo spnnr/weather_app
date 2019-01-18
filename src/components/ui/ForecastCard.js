@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import DefaultButton from "./ui/DefaultButton";
+import DefaultButton from "./DefaultButton";
 
 // props:
 // - key
@@ -14,7 +14,7 @@ import DefaultButton from "./ui/DefaultButton";
 const ForecastCard = props => {
     const currently = props.forecast.currently;
     return (
-        <div className="card text-center">
+        <div className="card text-center mb-4">
             <div className="card-body">
                 <h3 className="card-title">{props.location}</h3>
                 <p>{currently.summary}</p>
@@ -56,6 +56,17 @@ const ForecastCard = props => {
                     text={props.buttonText}
                     icon="fa-bookmark"
                 />
+                {props.tmp && (
+                    <DefaultButton
+                        type="danger"
+                        onClick={e => {
+                            e.preventDefault();
+                            props.deleteCard();
+                        }}
+                        text={props.deleteButtonText}
+                        icon="fa-trash-alt"
+                    />
+                )}
             </div>
         </div>
     );
