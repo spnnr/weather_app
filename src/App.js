@@ -25,24 +25,23 @@ class App extends Component {
         locations: [],
         forecastList: [],
         units: "si",
-        unitsOptions: ["Metric", "Imperial"]
+        unitsOptions: ["Metric", "Imperial"],
+        currentAction: ""
     };
 
     // todo list:
-    // FIXME Spinner when loading
     // FIXME units display in WeatherCard
-    // FIXME make search button smaller
     //
-    // TODO custom bootstrap
     // TODO reformat WeatherCard
     // TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
+    // TODO custom bootstrap
     // TODO add nice graphics
     // TODO refresh weather automatically every 30 minutes
 
     // handles error messages
     handleError(error) {
         console.log(error);
-        this.setState({ error });
+        this.setState({ error, currentAction: "" });
     }
 
     // checks for empty object
@@ -64,7 +63,7 @@ class App extends Component {
 
     // handles search field request from the user
     onLocationSearchSubmit = async term => {
-        this.setState({ error: "" });
+        this.setState({ error: "", currentAction: "searching..." });
         let response = await axios.get("/geocode", {
             params: { address: term }
         });
@@ -74,7 +73,7 @@ class App extends Component {
 
     // handles geolocation request from the user
     onGeolocationRequest = () => {
-        this.setState({ error: "" });
+        this.setState({ error: "", currentAction: "searching..." });
         window.navigator.geolocation.getCurrentPosition(
             async position => {
                 let lat = position.coords.latitude.toFixed(7),
@@ -126,7 +125,7 @@ class App extends Component {
             return;
         }
         const tmpForecast = await this.requestWeather(tmpLocation);
-        this.setState({ tmpLocation, tmpForecast });
+        this.setState({ tmpLocation, tmpForecast, currentAction: "" });
     }
 
     // clears temporary search on user request
@@ -162,6 +161,7 @@ class App extends Component {
 
     // refreshes all weather, including tmpLocation
     refreshWeather = async () => {
+        this.setState({ currentAction: "updating..." });
         let tmpForecast = {};
         let forecastList = [];
         if (!this.isEmpty(this.state.tmpLocation)) {
@@ -173,7 +173,7 @@ class App extends Component {
                 forecastList.push(forecast);
             }
         }
-        this.setState({ tmpForecast, forecastList });
+        this.setState({ tmpForecast, forecastList, currentAction: "" });
     };
 
     // loads locations from localStorage
@@ -218,10 +218,39 @@ class App extends Component {
             error: "",
             forecastList: [],
             units: "si",
-            unitsOptions: ["Metric", "Imperial"]
+            unitsOptions: ["Metric", "Imperial"],
+            currentAction: ""
         });
         localStorage.clear();
     };
+
+    // show Spinner if processing user request
+    showForecastTmp() {
+        if (this.state.currentAction === "searching...") {
+            return <Spinner message={this.state.currentAction} />;
+        }
+        return (
+            <ForecastTmp
+                location={this.state.tmpForecast}
+                buttonAction={this.onSaveLocation}
+                buttonText="Save"
+                deleteCard={this.clearTmp}
+            />
+        );
+    }
+
+    showForecastList() {
+        if (this.state.currentAction === "updating...") {
+            return <Spinner message={this.state.currentAction} />;
+        }
+        return (
+            <ForecastList
+                forecastList={this.state.forecastList}
+                buttonAction={this.onDeleteLocation}
+                buttonText="Delete"
+            />
+        );
+    }
 
     componentDidMount() {
         if (localStorage) {
@@ -270,29 +299,19 @@ class App extends Component {
                 <main className="container">
                     <Alert error={this.state.error} />
                     <div className="row align-items-center mt-4">
-                        <ForecastTmp
-                            location={this.state.tmpForecast}
-                            buttonAction={this.onSaveLocation}
-                            buttonText="Save"
-                            deleteCard={this.clearTmp}
-                        />
+                        {this.showForecastTmp()}
                     </div>
                     <hr className="separator" />
                     <div className="row align-items-center mt-4">
-                        <ForecastList
-                            forecastList={this.state.forecastList}
-                            buttonAction={this.onDeleteLocation}
-                            buttonText="Delete"
-                        />
+                        {this.showForecastList()}
                     </div>
                 </main>
                 <Footer>
                     <span className="text-muted align-items-center">
                         <Modal
-                            type="secondary"
+                            type="danger"
                             modalTitle="Clear All Data"
-                            modalMessage="Are you sure you want to reset the state of the
-                            application?"
+                            modalMessage="Are you sure you want to delete all location data and reset the application?"
                             btnText="Clear all data"
                             btnAction={this.clearAllData}
                             btnIcon="fa-times"
