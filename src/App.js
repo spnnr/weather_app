@@ -21,7 +21,32 @@ class App extends Component {
     state = {
         error: "",
         tmpLocation: {},
-        tmpForecast: {},
+        tmpForecast: {
+            // name: "Some City",
+            // forecast: {
+            //     currently: {
+            //         time: 1547925491,
+            //         summary: "Mostly Cloudy",
+            //         icon: "partly-cloudy-day",
+            //         nearestStormDistance: 7,
+            //         nearestStormBearing: 14,
+            //         precipIntensity: 0,
+            //         precipProbability: 0,
+            //         temperature: 58.43,
+            //         apparentTemperature: 58.43,
+            //         dewPoint: 51.93,
+            //         humidity: 0.79,
+            //         pressure: 1027.72,
+            //         windSpeed: 0.22,
+            //         windGust: 3.58,
+            //         windBearing: 42,
+            //         cloudCover: 0.77,
+            //         uvIndex: 3,
+            //         visibility: 10,
+            //         ozone: 229.54
+            //     }
+            // }
+        },
         locations: [],
         forecastList: [],
         units: "si",
@@ -30,12 +55,11 @@ class App extends Component {
     };
 
     // todo list:
-    // FIXME units display in WeatherCard
     //
-    // TODO reformat WeatherCard
     // TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
-    // TODO custom bootstrap
     // TODO add nice graphics
+    // TODO deploy to heroku
+    // TODO custom bootstrap
     // TODO refresh weather automatically every 30 minutes
 
     // handles error messages
@@ -229,6 +253,12 @@ class App extends Component {
         if (this.state.currentAction === "searching...") {
             return <Spinner message={this.state.currentAction} />;
         }
+        if (
+            this.state.currentAction === "updating..." &&
+            !this.isEmpty(this.state.tmpForecast)
+        ) {
+            return null;
+        }
         return (
             <ForecastTmp
                 location={this.state.tmpForecast}
@@ -252,6 +282,8 @@ class App extends Component {
         );
     }
 
+    // FIXME uncomment when done
+
     componentDidMount() {
         if (localStorage) {
             this.getStateFromLocalStorage();
@@ -272,16 +304,16 @@ class App extends Component {
     }
 
     render() {
-        // console.log("App state", this.state);
+        console.log("App state", this.state);
         return (
             <div>
                 <Navbar onLocationSearchSubmit={this.onLocationSearchSubmit}>
-                    <div className="navbar-nav ml-auto">
-                        <div className="d-inline-flex flex-nowrap mr-auto">
+                    <div className="navbar-nav ml-auto controls">
+                        <div className="d-inline-flex flex-nowrap mx-auto my-2">
                             <DefaultButton
                                 onClick={this.onGeolocationRequest}
                                 icon="fa-map-marker-alt"
-                                type="secondary"
+                                type="secondary mr-2"
                             />
                             <InputSelect
                                 inputTitle="Units"
@@ -291,20 +323,15 @@ class App extends Component {
                             <DefaultButton
                                 onClick={this.refreshWeather}
                                 icon="fa-redo"
-                                type="secondary"
+                                type="secondary ml-2"
                             />
                         </div>
                     </div>
                 </Navbar>
                 <main className="container">
                     <Alert error={this.state.error} />
-                    <div className="row align-items-center mt-4">
-                        {this.showForecastTmp()}
-                    </div>
-                    <hr className="separator" />
-                    <div className="row align-items-center mt-4">
-                        {this.showForecastList()}
-                    </div>
+                    {this.showForecastTmp()}
+                    {this.showForecastList()}
                 </main>
                 <Footer>
                     <span className="text-muted align-items-center">

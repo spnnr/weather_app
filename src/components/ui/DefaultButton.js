@@ -11,16 +11,25 @@ const DefaultButton = props => {
         buttonText = "",
         iconType = "fas";
 
-    if (!(props.type === undefined)) {
-        className += " btn-" + props.type;
+    if (props.type) {
+        if (props.outline) {
+            className += " btn-outline-";
+        } else {
+            className += " btn-";
+        }
+        className += props.type;
     } else {
         className += " btn-primary";
     }
 
-    if (props.text !== undefined) {
-        buttonText = " " + props.text;
+    if (props.text) {
+        if (props.icon) {
+            buttonText += " " + props.text;
+        } else {
+            buttonText = props.text;
+        }
     }
-    if (props.icon !== undefined) {
+    if (props.icon) {
         iconType += " " + props.icon;
     }
 

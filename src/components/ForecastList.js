@@ -19,6 +19,8 @@ const ForecastList = props => {
             />
         );
     });
-    return <div className="col">{forecastList}</div>;
+    return (
+        <div className="row justify-content-center mt-4">{forecastList}</div>
+    );
 };
 export default ForecastList;

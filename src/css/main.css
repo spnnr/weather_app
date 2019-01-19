@@ -9,6 +9,14 @@ body {
     margin-bottom: 60px;
 }
 
+.controls .btn {
+    min-width: 35px;
+}
+
+.controls .col-sm {
+    padding: 0;
+}
+
 hr.separator {
     margin-top: 0;
 }

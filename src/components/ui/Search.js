@@ -33,7 +33,7 @@ class Search extends React.Component {
                     className="form-control form-control-sm mr-sm-2"
                 />
                 <button
-                    className="btn btn-sm btn-outline-success my-2 my-sm-0"
+                    className="btn btn-sm btn-success my-2 my-sm-0"
                     type="submit"
                 >
                     Search

@@ -1,0 +1,58 @@
+.card {
+    background-color: #f8f9fa;
+}
+
+.weather-icon {
+    height: 160px;
+    text-indent: -9999px;
+    width: 160px;
+}
+.partly-cloudy-day {
+    background: url(../images/partly-cloudy-day.svg) no-repeat center;
+    background-size: contain;
+}
+
+.clear-day {
+    background: url(../images/clear-day.svg) no-repeat center;
+    background-size: contain;
+}
+
+.clear-night {
+    background: url(../images/clear-night.svg) no-repeat center;
+    background-size: contain;
+}
+
+.rain {
+    background: url(../images/rain.svg) no-repeat center;
+    background-size: contain;
+}
+
+.snow {
+    background: url(../images/snow.svg) no-repeat center;
+    background-size: contain;
+}
+
+.sleet {
+    background: url(../images/sleet.svg) no-repeat center;
+    background-size: contain;
+}
+
+.wind {
+    background: url(../images/wind.svg) no-repeat center;
+    background-size: contain;
+}
+
+.fog {
+    background: url(../images/fog.svg) no-repeat center;
+    background-size: contain;
+}
+
+.cloudy {
+    background: url(../images/cloudy.svg) no-repeat center;
+    background-size: contain;
+}
+
+.partly-cloudy-night {
+    background: url(../images/partly-cloudy-night.svg) no-repeat center;
+    background-size: contain;
+}

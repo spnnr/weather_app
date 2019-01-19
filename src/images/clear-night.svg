@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="28px" height="28px" viewBox="0 0 28 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>clear-night</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="clear-night" fill="#000000" fill-rule="nonzero">
+            <path d="M26,12 C20.486,12 16,7.514 16,2 C16,0.896 15.104,0 14,0 C6.28,0 0,6.28 0,14 C0,21.72 6.28,28 14,28 C21.72,28 28,21.72 28,14 C28,12.896 27.104,12 26,12 Z M14,24 C8.486,24 4,19.514 4,14 C4,9.112 7.525,5.031 12.168,4.168 C13.102,10.154 17.845,14.897 23.832,15.832 C22.969,20.475 18.889,24 14,24 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>
