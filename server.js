@@ -4,7 +4,7 @@ const dotenv = require("dotenv").config();
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.SERVER_PORT;
 
 if (dotenv.error) {
     throw dotenv.error;
