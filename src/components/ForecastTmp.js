@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import ForecastCard from "./ui/ForecastCard";
+import ForecastCard from "./ForecastCard";
 
 function isEmpty(obj) {
     for (let key in obj) {

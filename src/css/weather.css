@@ -1,5 +1,36 @@
+/*
+    Daily forecast positioning
+ */
+.width-40 {
+    width: 40%;
+}
+
+.width-20 {
+    width: 20%;
+}
+
+/*
+    Card styling
+ */
 .card {
     background-color: #f8f9fa;
+}
+
+.condition {
+    font-size: 80%;
+    text-transform: uppercase;
+}
+
+/*
+    Weather icons
+ */
+
+.weather-icon-sm {
+    height: 35px;
+    text-indent: -9999px;
+    width: 35px;
+    position: relative;
+    top: -5px;
 }
 
 .weather-icon {
@@ -7,6 +38,7 @@
     text-indent: -9999px;
     width: 160px;
 }
+
 .partly-cloudy-day {
     background: url(../images/partly-cloudy-day.svg) no-repeat center;
     background-size: contain;

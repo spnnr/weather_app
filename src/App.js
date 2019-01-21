@@ -16,12 +16,16 @@ import InputSelect from "./components/ui/InputSelect";
 // css
 import "./css/main.css";
 
+// utils
+import { isEmpty } from "./utils/other";
+
 // App
 class App extends Component {
     state = {
         error: "",
         tmpLocation: {},
         tmpForecast: {
+            // begin testing data
             // name: "Some City",
             // forecast: {
             //     currently: {
@@ -44,8 +48,148 @@ class App extends Component {
             //         uvIndex: 3,
             //         visibility: 10,
             //         ozone: 229.54
+            //     },
+            //     minutely: {
+            //         summary: "Mostly cloudy for the hour.",
+            //         icon: "partly-cloudy-day"
+            //     },
+            //     hourly: {
+            //         summary: "Overcast throughout the day.",
+            //         icon: "cloudy"
+            //     },
+            //     daily: {
+            //         summary:
+            //             "Light rain tomorrow, with high temperatures bottoming out at 57°F on Monday.",
+            //         icon: "rain",
+            //         data: [
+            //             {
+            //                 time: 1547884800,
+            //                 summary: "Mostly cloudy throughout the day.",
+            //                 icon: "partly-cloudy-day",
+            //                 sunriseTime: 1547911410,
+            //                 sunsetTime: 1547947176,
+            //                 moonPhase: 0.45,
+            //                 precipIntensity: 0.0004,
+            //                 precipIntensityMax: 0.004,
+            //                 precipIntensityMaxTime: 1547884800,
+            //                 precipProbability: 0.58,
+            //                 precipType: "rain",
+            //                 temperatureHigh: 60.95,
+            //                 temperatureHighTime: 1547938800,
+            //                 temperatureLow: 56.39,
+            //                 temperatureLowTime: 1548000000,
+            //                 apparentTemperatureHigh: 60.95,
+            //                 apparentTemperatureHighTime: 1547938800,
+            //                 apparentTemperatureLow: 56.39,
+            //                 apparentTemperatureLowTime: 1548000000,
+            //                 dewPoint: 51.44,
+            //                 humidity: 0.81,
+            //                 pressure: 1026.3,
+            //                 windSpeed: 1.21,
+            //                 windGust: 7.64,
+            //                 windGustTime: 1547967600,
+            //                 windBearing: 156,
+            //                 cloudCover: 0.92,
+            //                 uvIndex: 3,
+            //                 uvIndexTime: 1547928000,
+            //                 visibility: 10,
+            //                 ozone: 229.65,
+            //                 temperatureMin: 54.27,
+            //                 temperatureMinTime: 1547888400,
+            //                 temperatureMax: 60.95,
+            //                 temperatureMaxTime: 1547938800,
+            //                 apparentTemperatureMin: 54.27,
+            //                 apparentTemperatureMinTime: 1547888400,
+            //                 apparentTemperatureMax: 60.95,
+            //                 apparentTemperatureMaxTime: 1547938800
+            //             },
+            //             {
+            //                 time: 1547971200,
+            //                 summary:
+            //                     "Mostly cloudy throughout the day and breezy starting in the afternoon.",
+            //                 icon: "wind",
+            //                 sunriseTime: 1547997781,
+            //                 sunsetTime: 1548033641,
+            //                 moonPhase: 0.49,
+            //                 precipIntensity: 0.0147,
+            //                 precipIntensityMax: 0.0302,
+            //                 precipIntensityMaxTime: 1548007200,
+            //                 precipProbability: 0.85,
+            //                 precipType: "rain",
+            //                 temperatureHigh: 56.6,
+            //                 temperatureHighTime: 1548007200,
+            //                 temperatureLow: 49.92,
+            //                 temperatureLowTime: 1548079200,
+            //                 apparentTemperatureHigh: 56.6,
+            //                 apparentTemperatureHighTime: 1548007200,
+            //                 apparentTemperatureLow: 43.55,
+            //                 apparentTemperatureLowTime: 1548050400,
+            //                 dewPoint: 51.31,
+            //                 humidity: 0.88,
+            //                 pressure: 1019.11,
+            //                 windSpeed: 10.1,
+            //                 windGust: 32.58,
+            //                 windGustTime: 1548050400,
+            //                 windBearing: 245,
+            //                 cloudCover: 0.92,
+            //                 uvIndex: 2,
+            //                 uvIndexTime: 1548010800,
+            //                 visibility: 8.08,
+            //                 ozone: 296.35,
+            //                 temperatureMin: 49.92,
+            //                 temperatureMinTime: 1548046800,
+            //                 temperatureMax: 57.34,
+            //                 temperatureMaxTime: 1547985600,
+            //                 apparentTemperatureMin: 43.55,
+            //                 apparentTemperatureMinTime: 1548050400,
+            //                 apparentTemperatureMax: 57.34,
+            //                 apparentTemperatureMaxTime: 1547985600
+            //             },
+            //             {
+            //                 time: 1548057600,
+            //                 summary: "Partly cloudy in the morning.",
+            //                 icon: "partly-cloudy-night",
+            //                 sunriseTime: 1548084151,
+            //                 sunsetTime: 1548120107,
+            //                 moonPhase: 0.52,
+            //                 precipIntensity: 0.0007,
+            //                 precipIntensityMax: 0.0034,
+            //                 precipIntensityMaxTime: 1548061200,
+            //                 precipProbability: 0.27,
+            //                 precipType: "rain",
+            //                 temperatureHigh: 57.28,
+            //                 temperatureHighTime: 1548111600,
+            //                 temperatureLow: 47.7,
+            //                 temperatureLowTime: 1548169200,
+            //                 apparentTemperatureHigh: 57.28,
+            //                 apparentTemperatureHighTime: 1548111600,
+            //                 apparentTemperatureLow: 44.91,
+            //                 apparentTemperatureLowTime: 1548169200,
+            //                 dewPoint: 43.57,
+            //                 humidity: 0.72,
+            //                 pressure: 1024.26,
+            //                 windSpeed: 11.27,
+            //                 windGust: 29.18,
+            //                 windGustTime: 1548057600,
+            //                 windBearing: 316,
+            //                 cloudCover: 0.17,
+            //                 uvIndex: 3,
+            //                 uvIndexTime: 1548100800,
+            //                 visibility: 10,
+            //                 ozone: 308.81,
+            //                 temperatureMin: 49.92,
+            //                 temperatureMinTime: 1548079200,
+            //                 temperatureMax: 57.28,
+            //                 temperatureMaxTime: 1548111600,
+            //                 apparentTemperatureMin: 44.83,
+            //                 apparentTemperatureMinTime: 1548079200,
+            //                 apparentTemperatureMax: 57.28,
+            //                 apparentTemperatureMaxTime: 1548111600
+            //             }
+            //         ]
             //     }
             // }
+            // end testing data
         },
         locations: [],
         forecastList: [],
@@ -57,23 +201,13 @@ class App extends Component {
     // todo list:
     //
     // TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
-    // TODO add nice graphics
-    // TODO deploy to heroku
+    // TODO deploy to heroku/netlify
     // TODO custom bootstrap
-    // TODO refresh weather automatically every 30 minutes
 
     // handles error messages
     handleError(error) {
         console.log(error);
         this.setState({ error, currentAction: "" });
-    }
-
-    // checks for empty object
-    isEmpty(obj) {
-        for (let key in obj) {
-            if (obj.hasOwnProperty(key)) return false;
-        }
-        return true;
     }
 
     // handles unit selection
@@ -188,7 +322,7 @@ class App extends Component {
         this.setState({ currentAction: "updating..." });
         let tmpForecast = {};
         let forecastList = [];
-        if (!this.isEmpty(this.state.tmpLocation)) {
+        if (!isEmpty(this.state.tmpLocation)) {
             tmpForecast = await this.requestWeather(this.state.tmpLocation);
         }
         if (this.state.locations.length > 0) {
@@ -255,7 +389,7 @@ class App extends Component {
         }
         if (
             this.state.currentAction === "updating..." &&
-            !this.isEmpty(this.state.tmpForecast)
+            !isEmpty(this.state.tmpForecast)
         ) {
             return null;
         }
@@ -304,7 +438,7 @@ class App extends Component {
     }
 
     render() {
-        console.log("App state", this.state);
+        // console.log("App state", this.state);
         return (
             <div>
                 <Navbar onLocationSearchSubmit={this.onLocationSearchSubmit}>
