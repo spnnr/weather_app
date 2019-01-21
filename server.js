@@ -99,11 +99,12 @@ app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname + "/build/index.html"));
 });
 
-let PORT = process.env.SERVER_PORT || 5000;
+let port = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV === "production") {
-    PORT = process.env.PORT;
+    app.listen(process.env.PORT || 5000);
+} else {
+    app.listen(process.env.SERVER_PORT || 5000);
 }
 
-app.listen(PORT);
-console.log("Server running on port %d", PORT);
+console.log("Server running on port %d", port);
