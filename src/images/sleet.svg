@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="58px" height="58px" viewBox="0 0 58 58" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>sleet</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="sleet" fill="#000000">
+            <path d="M47,12 C46.493,12 45.888,12.079 45.311,12.184 C43.218,5.012 36.663,0 29,0 C21.336,0 14.781,5.012 12.688,12.184 C12.112,12.079 11.508,12 11,12 C4.935,12 0,16.935 0,23 C0,29.065 4.935,34 11,34 L47,34 C53.065,34 58,29.065 58,23 C58,16.935 53.065,12 47,12 Z M47,30 L11,30 C7.141,30 4,26.859 4,23 C4,19.141 7.141,16 11,16 C11.277,16 11.723,16.068 12.194,16.162 L12.194,18 C12.194,19.104 13.09,20 14.194,20 C15.298,20 16.194,19.104 16.194,18 L16.194,14.774 C17.269,8.524 22.632,4 29,4 C35.371,4 40.735,8.529 41.808,14.784 L41.808,18 C41.808,19.104 42.704,20 43.808,20 C44.912,20 45.808,19.104 45.808,18 L45.808,16.163 C46.278,16.069 46.726,16 47,16 C50.859,16 54,19.141 54,23 C54,26.859 50.859,30 47,30 Z" id="Shape" fill-rule="nonzero"></path>
+            <circle id="Oval" cx="20" cy="38" r="2"></circle>
+            <circle id="Oval" cx="38" cy="38" r="2"></circle>
+            <circle id="Oval" cx="29" cy="44" r="2"></circle>
+            <circle id="Oval" cx="38" cy="50" r="2"></circle>
+            <circle id="Oval" cx="29" cy="56" r="2"></circle>
+            <circle id="Oval" cx="20" cy="50" r="2"></circle>
+        </g>
+    </g>
+</svg>

@@ -4,14 +4,27 @@ html {
 }
 
 body {
-    margin-bottom: 60px; /* Margin bottom by footer height */
+    /*margin-bottom: -webkit-calc(60px + 2em);
+    margin-bottom: calc(60px + 2em);*/
+    margin-bottom: 60px;
+}
+
+.controls .btn {
+    min-width: 35px;
+}
+
+.controls .col-sm {
+    padding: 0;
+}
+
+hr.separator {
+    margin-top: 0;
 }
 
 .footer {
     position: absolute;
     bottom: 0;
     width: 100%;
-    min-height: 60px;
-    line-height: 60px;
+    min-height: 40px;
     background-color: #f5f5f5;
 }

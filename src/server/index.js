@@ -10,6 +10,7 @@ if (dotenv.error) {
 }
 // console.log(dotenv.parsed);
 
+// set headers for weather API query
 app.use("/weather", (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header(
@@ -24,19 +25,24 @@ app.get("/weather", async (req, res) => {
     // console.log(req.query);
     const API = process.env.DARKSKY_API;
     let lat = req.query.lat,
-        lng = req.query.lng;
+        lng = req.query.lng,
+        units = req.query.units,
+        result = {};
     try {
         var response = await axios.get(
-            `https://api.darksky.net/forecast/${API}/${lat},${lng}`
+            `https://api.darksky.net/forecast/${API}/${lat},${lng}`,
+            {
+                params: { units }
+            }
         );
+        result = response.data;
     } catch (error) {
         console.log("Error", error);
-        response = {
-            weather: {},
-            error
+        result = {
+            error: response.data.error
         };
     }
-    res.send(response.data);
+    res.send(result);
 });
 
 // Google Geocode API proxy

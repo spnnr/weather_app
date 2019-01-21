@@ -1,20 +1,35 @@
 import React from "react";
 
+// props:
+// - type
+// - onClick
+// - icon
+// - text
+
 const DefaultButton = props => {
-    let className = "btn",
+    let className = `btn btn-sm`,
         buttonText = "",
         iconType = "fas";
 
-    if (!(props.btnType === undefined)) {
-        className += " btn-" + props.btnType;
+    if (props.type) {
+        if (props.outline) {
+            className += " btn-outline-";
+        } else {
+            className += " btn-";
+        }
+        className += props.type;
     } else {
         className += " btn-primary";
     }
 
-    if (props.text !== undefined) {
-        buttonText = " " + props.text;
+    if (props.text) {
+        if (props.icon) {
+            buttonText += " " + props.text;
+        } else {
+            buttonText = props.text;
+        }
     }
-    if (props.icon !== undefined) {
+    if (props.icon) {
         iconType += " " + props.icon;
     }
 
