@@ -198,11 +198,7 @@ class App extends Component {
         currentAction: ""
     };
 
-    // todo list:
-    //
     // TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
-    // TODO deploy to heroku/netlify
-    // TODO custom bootstrap
 
     // handles error messages
     handleError(error) {
@@ -222,7 +218,7 @@ class App extends Component {
     // handles search field request from the user
     onLocationSearchSubmit = async term => {
         this.setState({ error: "", currentAction: "searching..." });
-        let response = await axios.get("/geocode", {
+        let response = await axios.get("/api/geocode", {
             params: { address: term }
         });
 
@@ -236,7 +232,7 @@ class App extends Component {
             async position => {
                 let lat = position.coords.latitude.toFixed(7),
                     lng = position.coords.longitude.toFixed(7);
-                let response = await axios.get("/geocode", {
+                let response = await axios.get("/api/geocode", {
                     params: {
                         latlng: `${lat},${lng}`
                     }
@@ -295,7 +291,7 @@ class App extends Component {
     async requestWeather(location) {
         let forecast = {};
         try {
-            const response = await axios.get("/weather", {
+            const response = await axios.get("/api/weather", {
                 params: {
                     lat: location.lat,
                     lng: location.lng,
