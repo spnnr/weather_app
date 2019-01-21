@@ -3,6 +3,7 @@ import React from "react";
 // components
 import DefaultButton from "./ui/DefaultButton";
 import DaysList from "./DaysList";
+import Condition from "./Condition";
 
 // css
 import "../css/weather.css";
@@ -20,9 +21,8 @@ import { getHoursAndMinutes } from "../utils/time";
 // - deleteCard
 // - deleteButtonText
 
-// TODO reformat and refactor
-// TODO add units
 // TODO add hourly forecast
+// TODO add units
 
 const ForecastCard = props => {
     const currently = props.forecast.currently;
@@ -34,6 +34,7 @@ const ForecastCard = props => {
     return (
         <div className="col-sm-10 col-md-8 col-lg-6">
             <div className="card text-center mb-4">
+                {/* Current temperature */}
                 <div className="card-body border-bottom">
                     <h3 className="card-title">{props.location}</h3>
                     <p className="text-secondary">
@@ -56,84 +57,50 @@ const ForecastCard = props => {
                         &deg;
                     </h6>
                 </div>
+                {/* Current conditions */}
                 <div className="card-body border-bottom">
+                    <div className="card-text row mb-4">
+                        <Condition
+                            type="Sunrise"
+                            value={getHoursAndMinutes(
+                                daily.data[0].sunriseTime,
+                                timezone
+                            )}
+                        />
+                        <Condition
+                            type="Sunset"
+                            value={getHoursAndMinutes(
+                                daily.data[0].sunsetTime,
+                                timezone
+                            )}
+                        />
+                    </div>
+                    <div className="card-text row mb-4">
+                        <Condition
+                            type={`Chance of ${daily.data[0].precipType}`}
+                            value={`${Math.round(
+                                currently.precipProbability * 100
+                            )}%`}
+                        />
+                        <Condition
+                            type="Humidity"
+                            value={`${Math.round(currently.humidity * 100)}%`}
+                        />
+                    </div>
                     <div className="card-text row">
-                        <div className="col">
-                            <div className="mb-4">
-                                <span className="d-block condition text-secondary">
-                                    Sunrise
-                                </span>
-                                <span className="d-block">
-                                    <strong>
-                                        {getHoursAndMinutes(
-                                            daily.data[0].sunriseTime,
-                                            timezone
-                                        )}
-                                    </strong>
-                                </span>
-                            </div>
-                            <div className="mb-4">
-                                <span className="d-block condition text-secondary">
-                                    Chance of {daily.data[0].precipType}
-                                </span>
-                                <span className="d-block">
-                                    <strong>
-                                        {Math.round(
-                                            currently.precipProbability * 100
-                                        )}
-                                        %
-                                    </strong>
-                                </span>
-                            </div>
-                            <div className="mb-4">
-                                <span className="d-block condition text-secondary">
-                                    Wind Speed
-                                </span>
-                                <span className="d-block">
-                                    <strong>
-                                        {Math.round(currently.windSpeed)}
-                                    </strong>
-                                </span>
-                            </div>
-                        </div>
-                        <div className="col">
-                            <div className="mb-4">
-                                <span className="d-block condition text-secondary">
-                                    Sunset
-                                </span>
-                                <span className="d-block">
-                                    <strong>
-                                        {getHoursAndMinutes(
-                                            daily.data[0].sunsetTime,
-                                            timezone
-                                        )}
-                                    </strong>
-                                </span>
-                            </div>
-                            <div className="mb-4">
-                                <span className="d-block condition text-secondary">
-                                    Humidity
-                                </span>
-                                <span className="d-block">
-                                    <strong>
-                                        {Math.round(currently.humidity * 100)}%
-                                    </strong>
-                                </span>
-                            </div>
-                            <div>
-                                <span className="d-block condition text-secondary">
-                                    Wind Gust
-                                </span>
-                                <span className="d-block">
-                                    <strong>
-                                        {Math.round(currently.windGust)}
-                                    </strong>
-                                </span>
-                            </div>
-                        </div>
+                        <Condition
+                            type="Wind Speed"
+                            value={Math.round(currently.windSpeed)}
+                        />
+                        <Condition
+                            type="Wind Gust"
+                            value={Math.round(currently.windGust)}
+                        />
                     </div>
                 </div>
+                {/* 7-day forecast */}
                 <DaysList forecast={daily} timezone={timezone} />
+                {/* Buttons */}
                 <div className="card-body">
                     {!props.tmp && (
                         <DefaultButton
@@ -157,6 +124,7 @@ const ForecastCard = props => {
                                 }}
                                 text={props.buttonText}
                                 icon="fa-bookmark"
+                                outline
                             />
                             <DefaultButton
                                 type="danger mx-1"
@@ -166,6 +134,7 @@ const ForecastCard = props => {
                                 }}
                                 text={props.deleteButtonText}
                                 icon="fa-trash-alt"
+                                outline
                             />
                         </div>
                     )}
