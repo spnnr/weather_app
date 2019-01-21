@@ -6,8 +6,10 @@ const path = require("path");
 const app = express();
 const PORT = process.env.SERVER_PORT;
 
-if (dotenv.error) {
-    throw dotenv.error;
+if (process.env.NODE_ENV !== "production") {
+    if (dotenv.error) {
+        throw dotenv.error;
+    }
 }
 
 class NotFoundError extends Error {
