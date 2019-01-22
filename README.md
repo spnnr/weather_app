@@ -1,10 +1,30 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+To run it locally you need to create a `.env` file and specify the following key value pairs:
+
+```
+GOOGLE_API=<YOUR_GOOGLE_API_KEY_HERE>
+DARKSKY_API=<YOUR_DARKSKY_API_KEY_HERE>
+SERVER_PORT=8080
+PORT=3000
+```
+
+If you change SERVER_PORT to any other value, don't forget to update `"proxy":"http://localhost:8080"` in `package.json`
+
+To obtain the Darksky API key please register at [https://www.darksky.net](https://www.darksky.net).
+To obtain Google Geocode API key please follow the steps in this quick guide: [https://developers.google.com/maps/documentation/geocoding/get-api-key](https://developers.google.com/maps/documentation/geocoding/get-api-key)
+
+Don't forget to run `npm install` before using the following scripts :)
+
 ## Available Scripts
 
 In the project directory, you can run:
 
 ### `npm start`
+
+Runs just the API proxy on the port you specify.
+
+### `npm run dev`
 
 Runs the app in the development mode.<br>
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
