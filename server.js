@@ -4,10 +4,11 @@ const dotenv = require("dotenv").config();
 const path = require("path");
 
 const app = express();
-const PORT = process.env.SERVER_PORT;
 
-if (dotenv.error) {
-    throw dotenv.error;
+if (process.env.NODE_ENV !== "production") {
+    if (dotenv.error) {
+        throw dotenv.error;
+    }
 }
 
 class NotFoundError extends Error {
@@ -73,7 +74,11 @@ app.get("/api/geocode", async (req, res) => {
             { params }
         );
         if (response.data.results.length === 0) {
-            throw new NotFoundError("Address not found");
+            let message = "";
+            if (response.data.error_message) {
+                message = response.data.error_message;
+            }
+            throw new NotFoundError(message ? message : "Address not found");
         }
         const lat = response.data.results[0].geometry.location.lat,
             lng = response.data.results[0].geometry.location.lng,
@@ -98,5 +103,12 @@ app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname + "/build/index.html"));
 });
 
-app.listen(PORT);
-console.log("Server running on port %d", PORT);
+let port = process.env.PORT || 5000;
+
+if (process.env.NODE_ENV === "production") {
+    app.listen(process.env.PORT || 5000);
+} else {
+    app.listen(process.env.SERVER_PORT || 5000);
+}
+
+console.log("Server running on port %d", port);
