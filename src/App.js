@@ -253,12 +253,17 @@ class App extends Component {
         const forecastList = this.state.forecastList.filter(location => {
             return location.id !== this.state.tmpLocation.id;
         });
-        this.setState({
-            locations: [this.state.tmpLocation, ...locations],
-            forecastList: [this.state.tmpForecast, ...forecastList],
-            tmpForecast: {},
-            tmpLocation: {}
-        });
+        this.setState(
+            {
+                locations: [this.state.tmpLocation, ...locations],
+                forecastList: [this.state.tmpForecast, ...forecastList],
+                tmpForecast: {},
+                tmpLocation: {}
+            },
+            () => {
+                this.saveStateToLocalStorage();
+            }
+        );
     };
 
     // handles user's request to delete location
@@ -418,18 +423,15 @@ class App extends Component {
         if (localStorage) {
             this.getStateFromLocalStorage();
         }
-        window.addEventListener(
-            "beforeunload",
-            this.saveStateToLocalStorage.bind(this)
-        );
+        // console.log(navigator.userAgent.match(/Chrome/i));
+        // window.addEventListener(
+        //     "beforeunload",
+        //     this.saveStateToLocalStorage.bind(this)
+        // );
     }
 
     // cleaning up before component unmounts
     componentWillUnmount() {
-        window.removeEventListener(
-            "beforeunload",
-            this.saveStateToLocalStorage.bind(this)
-        );
         this.saveStateToLocalStorage();
     }
 
