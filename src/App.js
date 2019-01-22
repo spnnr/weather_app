@@ -19,6 +19,10 @@ import "./css/main.css";
 // utils
 import { isEmpty } from "./utils/other";
 
+// TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
+// TODO add a fallback to browser's geolocation API in the form of Google's geolocation API
+// TODO add PropTypes
+
 // App
 class App extends Component {
     state = {
@@ -32,9 +36,11 @@ class App extends Component {
         currentAction: ""
     };
 
-    // TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
-
-    // handles error messages
+    /**
+     * Handles error messages
+     *
+     * @param  {Error, string} error - an error from API or thrown by functions
+     */
     handleError(error) {
         let message = "";
         if (error.message) {
@@ -45,7 +51,11 @@ class App extends Component {
         this.setState({ error: message, currentAction: "" });
     }
 
-    // handles unit selection
+    /**
+     * Handles unit selection
+     *
+     * @param  {string} input - can be one of "metric" or "imperial"
+     */
     onUnitsChange = input => {
         // console.log(input);
         let units = input === "metric" ? "si" : "us";
@@ -54,7 +64,11 @@ class App extends Component {
         });
     };
 
-    // handles search field request from the user
+    /**
+     * Handles search field request from the user
+     *
+     * @param  {string} term - input from search field
+     */
     onLocationSearchSubmit = async term => {
         this.setState({ error: "", currentAction: "searching..." });
         let response = await axios.get("/api/geocode", {
@@ -64,7 +78,9 @@ class App extends Component {
         this.addTmpLocation(response.data);
     };
 
-    // handles geolocation request from the user
+    /**
+     * Handles geolocation request from the user
+     */
     onGeolocationRequest = () => {
         this.setState({ error: "", currentAction: "searching..." });
         window.navigator.geolocation.getCurrentPosition(
@@ -84,7 +100,9 @@ class App extends Component {
         );
     };
 
-    // handles user's request to save location
+    /**
+     * Handles user's request to save location
+     */
     onSaveLocation = () => {
         const locations = this.state.locations.filter(location => {
             return location.id !== this.state.tmpLocation.id;
@@ -105,7 +123,11 @@ class App extends Component {
         );
     };
 
-    // handles user's request to delete location
+    /**
+     * Handles user's request to delete location
+     *
+     * @param  {string} id - location id returned by Google's Geocode API
+     */
     onDeleteLocation = id => {
         const locations = this.state.locations.filter(location => {
             return location.id !== id;
@@ -116,7 +138,11 @@ class App extends Component {
         this.setState({ locations, forecastList });
     };
 
-    // saves a recent search as a temporary location and requests weather
+    /**
+     * Saves a recent search as a temporary location and requests weather
+     *
+     * @param {object} tmpLocation - a location object returned by the API proxy
+     */
     async addTmpLocation(tmpLocation) {
         if (tmpLocation.hasOwnProperty("error")) {
             this.handleError(tmpLocation.error);
@@ -126,12 +152,18 @@ class App extends Component {
         this.setState({ tmpLocation, tmpForecast, currentAction: "" });
     }
 
-    // clears temporary search on user request
+    /**
+     * Clears temporary search on user request
+     */
     clearTmp = () => {
         this.setState({ tmpLocation: {}, tmpForecast: {} });
     };
 
-    // requests weather for a single location and returns it
+    /**
+     * Requests weather for a single location and returns it
+     *
+     * @param  {object} location - location object returned by the API proxy
+     */
     async requestWeather(location) {
         let forecast = {};
         try {
@@ -157,7 +189,9 @@ class App extends Component {
         return forecast;
     }
 
-    // refreshes all weather, including tmpLocation
+    /**
+     * Refreshes all weather data, including tmpLocation
+     */
     refreshWeather = async () => {
         this.setState({ currentAction: "updating..." });
         let tmpForecast = {};
@@ -174,7 +208,9 @@ class App extends Component {
         this.setState({ tmpForecast, forecastList, currentAction: "" });
     };
 
-    // loads locations from localStorage
+    /**
+     * Loads locations from localStorage
+     */
     getStateFromLocalStorage() {
         // get units
         let units = "si";
@@ -201,13 +237,17 @@ class App extends Component {
         }
     }
 
-    // saves locations in localStorage
+    /**
+     * Saves locations in localStorage
+     */
     saveStateToLocalStorage() {
         localStorage.setItem("locations", JSON.stringify(this.state.locations));
         localStorage.setItem("units", this.state.units);
     }
 
-    // delete all data from localStorage and clear state
+    /**
+     * Delete all data from localStorage and clear state
+     */
     clearAllData = () => {
         this.setState({
             tmpLocation: {},
@@ -222,7 +262,9 @@ class App extends Component {
         localStorage.clear();
     };
 
-    // show Spinner if processing user request
+    /**
+     * show Spinner if processing user request
+     */
     showForecastTmp() {
         if (this.state.currentAction === "searching...") {
             return <Spinner message={this.state.currentAction} />;
@@ -243,6 +285,9 @@ class App extends Component {
         );
     }
 
+    /**
+     * Shows list of ForecastCards for stored locations
+     */
     showForecastList() {
         if (this.state.currentAction === "updating...") {
             return <Spinner message={this.state.currentAction} />;
@@ -258,13 +303,15 @@ class App extends Component {
 
     // FIXME uncomment when done
 
+    /*
+    React lifecycle functions
+     */
     componentDidMount() {
         if (localStorage) {
             this.getStateFromLocalStorage();
         }
     }
 
-    // cleaning up before component unmounts
     componentWillUnmount() {
         this.saveStateToLocalStorage();
     }
