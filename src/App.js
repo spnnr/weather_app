@@ -136,7 +136,9 @@ class App extends Component {
         const forecastList = this.state.forecastList.filter(location => {
             return location.id !== id;
         });
-        this.setState({ locations, forecastList });
+        this.setState({ locations, forecastList }, () => {
+            this.saveStateToLocalStorage();
+        });
     };
 
     /**
