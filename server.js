@@ -74,7 +74,11 @@ app.get("/api/geocode", async (req, res) => {
             { params }
         );
         if (response.data.results.length === 0) {
-            throw new NotFoundError("Address not found");
+            let message = "";
+            if (response.data.error_message) {
+                message = response.data.error_message;
+            }
+            throw new NotFoundError(message ? message : "Address not found");
         }
         const lat = response.data.results[0].geometry.location.lat,
             lng = response.data.results[0].geometry.location.lng,
