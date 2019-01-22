@@ -22,6 +22,7 @@ import { isEmpty } from "./utils/other";
 // TODO add ThemeSwitch (toggle light and dark mode) https://github.com/Heydon/react-theme-switch
 // TODO add a fallback to browser's geolocation API in the form of Google's geolocation API
 // TODO add PropTypes
+// TODO add unit testing!!!
 
 // App
 class App extends Component {
