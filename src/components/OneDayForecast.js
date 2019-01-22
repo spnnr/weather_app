@@ -3,6 +3,11 @@ import React from "react";
 // utils
 import { getHoursAndMinutes, getDayOfWeek } from "../utils/time";
 
+/**
+ * [description]
+ * @param  {[type]} props [description]
+ * @return {[type]}       [description]
+ */
 const OneDayForecast = props => {
     const forecast = props.forecast;
     return (
